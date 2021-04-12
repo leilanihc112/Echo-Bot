@@ -1,0 +1,73 @@
+import discord
+from discord.ext import commands
+import re
+import sys
+import os
+import random
+
+# Process regexes and send response
+class Processor(commands.Cog):
+	def __init__(self, bot):
+		self.bot = bot
+		self.regexes = {}
+		try:
+			with open('responses/regex_items.txt') as f:
+				for line in f:
+					regex, response = line.strip().split('\t', 1)
+					regex1 = regex.split(' ')
+					response1 = response.split(' ')
+					regex2 = bytes([int(x,2) for x in regex1]).decode('utf-8')
+					response2 = bytes([int(x,2) for x in response1]).decode('utf-8')
+					# response is a folder in responses/regex folder
+					self.regexes[regex2] = response2.strip()
+		except:
+			print(sys.exc_info()[0])
+			raise
+		f.close()
+		try:
+			for reg, resp in self.regexes.items():
+				if not (os.path.isdir(os.getcwd() + '/responses/regex' + '/' + resp)):
+					print(resp + ' regex folder does not exist')
+		except:
+			print(sys.exc_info()[0])
+			raise
+
+	@commands.Cog.listener()
+	async def on_message(self, message):
+		if message.author == self.bot.user:
+			return
+		if message.content.startswith(self.bot.command_prefix):
+			return
+		if self.bot.allow_regex == True:
+			for reg, resp in self.regexes.items():
+				try:
+					if re.search(reg, message.content, re.IGNORECASE):
+						try:
+							response_file = random.choice(os.listdir(os.getcwd() + '/responses/regex' + '/' + resp))
+							response_message = ''
+							with open('responses/regex/' + '/' + resp + '/' + response_file, 'r') as f:
+								for line in f:
+									temp_line = line.split(' ')
+									response_message = response_message + bytes([int(x,2) for x in temp_line]).decode('utf-8')
+							response_message.replace('\\n', '\n')
+						except:
+							print(sys.exc_info()[0])
+						f.close()
+						await message.channel.send(response_message)
+				except KeyError as e:
+					print(e)
+					continue
+			if self.bot.allow_birthday:
+				if re.search('happy birthday|happy bday|hbd', message.content, re.IGNORECASE):
+					try:
+						response_message = ''
+						with open('responses/regex/birthday/birthday.txt', 'r') as f:
+							for line in f:
+								temp_line = line.split(' ')
+								response_message = response_message + bytes([int(x,2) for x in temp_line]).decode('utf-8')
+							response_message.replace('\\n', '\n')
+					except:
+						print(sys.exc_info()[0])
+					f.close()
+					self.bot.allow_birthday = False
+					await message.channel.send(response_message)

@@ -1,0 +1,197 @@
+import discord
+from discord.ext.commands import Bot
+import responses.process
+import commands.commands
+import os
+import datetime
+import asyncio
+
+class BetterBot(Bot):
+	def __init__(self, command_prefix):
+		super().__init__(command_prefix)
+		self.allow_birthday = True
+		self.allow_regex = True
+
+	async def process_commands(self, message):
+		ctx = await self.get_context(message)
+		await self.invoke(ctx)
+
+bot = BetterBot(command_prefix='.')
+
+def define_cogs():
+    return {
+        'Processor': (responses.process.Processor, 'responses.process'),
+		'Text': (commands.commands.Text, 'commands.commands'),
+    }
+
+_COGS = define_cogs()
+
+@bot.event
+async def on_ready():
+    for name, cog in _COGS.items():
+        bot.add_cog(cog[0](bot))
+    print('Bot connected as {0}'.format(bot.user))
+    print('Bot is living in {0}'.format(bot.guilds))
+
+# calculate holidays that are not on a fixed date
+def holiday(month, day_of_week, amount, year):
+	first = datetime.date(year, month, 1).weekday()
+	earliest = 7*(amount - 1)+1
+	offset = day_of_week - first
+	if offset < 0:
+		latest = 7*amount
+		day = latest + offset + 1
+	else:
+		day = earliest + offset
+	return_date = datetime.datetime.strftime(datetime.date(year, month, day), '%m/%d')
+	return_date = return_date + ' 09:00'
+	return return_date
+
+july_time = '07/04 09:00'
+april_fools_time = '04/01 09:00'
+christmas_time = '12/25 09:00'
+halloween_time = '10/31 09:00'
+november_time = '11/01 09:00'
+st_patricks_time = '03/17 09:00'
+valentines_time = '02/14 09:00'
+four_twenty_time = '04/20 16:20'
+message_channel_id= 499279740935471109
+
+# send message on holidays
+async def time_check():
+	await bot.wait_until_ready()
+	message_channel=bot.get_channel(message_channel_id)
+	while not bot.is_closed():
+		now=datetime.datetime.strftime(datetime.datetime.now(), '%m/%d %H:%M')
+		if now == july_time:
+			holiday_message = ''
+			try:
+				with open('responses/holiday/4th_of_july.txt', 'r', encoding='utf8') as f:
+					for line in f:
+						holiday_message = holiday_message + line
+			except:
+				print(sys.exc_info()[0])
+			f.close()
+			await message_channel.send(holiday_message)
+			time=90
+		elif now == april_fools_time:
+			holiday_message = ''
+			try:
+				with open('responses/holiday/april_fools.txt', 'r', encoding='utf8') as f:
+					for line in f:
+						holiday_message = holiday_message + line
+			except:
+				print(sys.exc_info()[0])
+			f.close()
+			await message_channel.send(holiday_message)
+			time=90
+		elif now == christmas_time:
+			holiday_message = ''
+			try:
+				with open('responses/holiday/christmas.txt', 'r', encoding='utf8') as f:
+					for line in f:
+						holiday_message = holiday_message + line
+			except:
+				print(sys.exc_info()[0])
+			f.close()
+			await message_channel.send(holiday_message)
+			time=90
+		elif now == halloween_time:
+			holiday_message = ''
+			try:
+				with open('responses/holiday/halloween.txt', 'r', encoding='utf8') as f:
+					for line in f:
+						holiday_message = holiday_message + line
+			except:
+				print(sys.exc_info()[0])
+			f.close()
+			await message_channel.send(holiday_message)
+			time=90
+		elif now == november_time:
+			holiday_message = ''
+			try:
+				with open('responses/holiday/november.txt', 'r', encoding='utf8') as f:
+					for line in f:
+						holiday_message = holiday_message + line
+			except:
+				print(sys.exc_info()[0])
+			f.close()
+			await message_channel.send(holiday_message)
+			time=90
+		elif now == holiday(2, 0, 3, datetime.datetime.now().year):
+			holiday_message = ''
+			try:
+				with open('responses/holiday/presidents_day.txt', 'r', encoding='utf8') as f:
+					for line in f:
+						holiday_message = holiday_message + line
+			except:
+				print(sys.exc_info()[0])
+			f.close()
+			await message_channel.send(holiday_message)
+			time=90
+		elif now == st_patricks_time:
+			holiday_message = ''
+			try:
+				with open('responses/holiday/st_patricks.txt', 'r', encoding='utf8') as f:
+					for line in f:
+						holiday_message = holiday_message + line
+			except:
+				print(sys.exc_info()[0])
+			f.close()
+			await message_channel.send(holiday_message)
+			time=90
+		elif now == holiday(11, 3, 4, datetime.datetime.now().year):
+			holiday_message = ''
+			try:
+				with open('responses/holiday/thanksgiving.txt', 'r', encoding='utf8') as f:
+					for line in f:
+						holiday_message = holiday_message + line
+			except:
+				print(sys.exc_info()[0])
+			f.close()
+			await message_channel.send(holiday_message)
+			time=90
+		elif now == valentines_time:
+			holiday_message = ''
+			try:
+				with open('responses/holiday/valentines.txt', 'r', encoding='utf8') as f:
+					for line in f:
+						holiday_message = holiday_message + line
+			except:
+				print(sys.exc_info()[0])
+			f.close()
+			await message_channel.send(holiday_message)
+			time=90
+		elif now == four_twenty_time:
+			holiday_message = ''
+			try:
+				with open('responses/holiday/420.txt', 'r', encoding='utf8') as f:
+					for line in f:
+						holiday_message = holiday_message + line
+			except:
+				print(sys.exc_info()[0])
+			f.close()
+			await message_channel.send(holiday_message)
+			time=90
+		else:
+			time=1
+		await(asyncio.sleep(time))
+
+midnight_time = "00:00"
+
+# send message on birthdays - only send in response to regex once per day
+async def birthday_check():
+	await bot.wait_until_ready()
+	while not bot.is_closed():
+		now=datetime.datetime.strftime(datetime.datetime.now(), '%H:%M')
+		if now == midnight_time:
+			bot.allow_birthday = True
+			time=90
+		else:
+			time=1
+		await(asyncio.sleep(time))
+
+bot.loop.create_task(time_check())
+bot.loop.create_task(birthday_check())
+
+bot.run(open("secrets.txt","r").read())
