@@ -36,3 +36,19 @@ class Text(commands.Cog):
         else:
             content = "Invalid arg - must be 'on' or 'off'"
         await context.channel.send(content)
+
+    @commands.command(name='add_role', help='Add role to user')
+    async def add_role(self, context, role:discord.Role, member:discord.Member):
+        if role in member.roles:
+            await context.channel.send("{0} already has {1} role".format(member.name, role.name))
+        else:
+            await member.add_roles(role)
+            await context.channel.send("{0} role given to {1}".format(role.name, member.name))
+
+    @commands.command(name='remove_role', help='Remove role from user')
+    async def remove_role(self, context, role:discord.Role, member:discord.Member):
+        if role in member.roles:
+            await member.remove_roles(role)
+            await context.channel.send("{0} role removed from {1}".format(role.name, member.name))
+        else:
+            await context.channel.send("{0} does not have {1} role".format(member.name, role.name))
