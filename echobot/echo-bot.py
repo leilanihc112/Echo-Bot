@@ -2,6 +2,7 @@ import discord
 from discord.ext.commands import Bot
 import responses.process
 import commands.commands
+import notifications.notif
 import os
 import datetime
 import asyncio
@@ -21,6 +22,7 @@ bot = BetterBot(command_prefix='.')
 def define_cogs():
     return {
         'Processor': (responses.process.Processor, 'responses.process'),
+		'Notifications': (notifications.notif.Notifications, 'notifications.notif'),
 		'Text': (commands.commands.Text, 'commands.commands'),
     }
 
