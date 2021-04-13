@@ -52,3 +52,21 @@ class Text(commands.Cog):
             await context.channel.send("{0} role removed from {1}".format(role.name, member.name))
         else:
             await context.channel.send("{0} does not have {1} role".format(member.name, role.name))
+
+    @commands.command(name='create_role', help='Create new role')
+    async def create_role(self, context, *, name):
+        guild = context.guild
+        if discord.utils.get(guild.roles, name=name):
+            await context.send("Role '{0}' already exists".format(name))
+        else:
+            await guild.create_role(name=name)
+            await context.send("Role '{0}' has been created".format(name))
+
+    @commands.command(name='delete_role', help='Delete existing role')
+    async def delete_role(self, context, *, role: discord.Role):
+        guild = context.guild
+        if discord.utils.get(guild.roles, name=role.name):
+            await role.delete()
+            await context.send("Role '{0}' has been deleted".format(role.name))
+        else:
+            await context.send("Error")
