@@ -15,4 +15,4 @@ class Notifications(commands.Cog):
             member_ids = after.channel.voice_states.keys()
             # if the channel this member is in only has 1 member - send notification only for the first person that joins
             if len(member_ids) == 1:
-                await message_channel.send("IT'S GAMER TIME <@&831364494013497354>")
+                await message_channel.send("IT'S GAMER TIME @here")
