@@ -29,6 +29,7 @@ async def on_ready():
 	setattr(BetterBot, "allow_birthday", True)
 	setattr(BetterBot, "allow_regex", True)
 	setattr(BetterBot, "last_timeStamp_vc", datetime.datetime.utcfromtimestamp(0))
+	setattr(BetterBot, "last_timeStamp_regex", datetime.datetime.utcfromtimestamp(0))
 	
 	for name, cog in _COGS.items():
 		bot.add_cog(cog[0](bot))

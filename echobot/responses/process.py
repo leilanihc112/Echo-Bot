@@ -4,6 +4,7 @@ import re
 import sys
 import os
 import random
+import datetime
 
 # Process regexes and send response
 class Processor(commands.Cog):
@@ -42,32 +43,48 @@ class Processor(commands.Cog):
 			for reg, resp in self.regexes.items():
 				try:
 					if re.search(reg, message.content, re.IGNORECASE):
-						try:
-							response_file = random.choice(os.listdir(os.getcwd() + '/responses/regex' + '/' + resp))
-							response_message = ''
-							with open('responses/regex/' + '/' + resp + '/' + response_file, 'r') as f:
-								for line in f:
-									temp_line = line.split(' ')
-									response_message = response_message + bytes([int(x,2) for x in temp_line]).decode('utf-8')
-							response_message.replace('\\n', '\n')
-						except:
-							print(sys.exc_info()[0])
-						f.close()
-						await message.channel.send(response_message)
+						# don't spam
+						time_difference = (datetime.datetime.utcnow() - self.bot.last_timeStamp_regex).total_seconds()
+						if time_difference < 3:
+							return
+						else:
+							self.bot.last_timeStamp_regex = datetime.datetime.utcnow()
+							# limit probability on which this is triggered
+							if random.random() < 0.6:
+								try:
+									response_file = random.choice(os.listdir(os.getcwd() + '/responses/regex' + '/' + resp))
+									response_message = ''
+									with open('responses/regex/' + '/' + resp + '/' + response_file, 'r') as f:
+										for line in f:
+											temp_line = line.split(' ')
+											response_message = response_message + bytes([int(x,2) for x in temp_line]).decode('utf-8')
+									response_message.replace('\\n', '\n')
+								except:
+									print(sys.exc_info()[0])
+								f.close()
+								await message.channel.send(response_message)
 				except KeyError as e:
 					print(e)
 					continue
 			if self.bot.allow_birthday:
 				if re.search('happy birthday|happy bday|hbd', message.content, re.IGNORECASE):
-					try:
-						response_message = ''
-						with open('responses/regex/birthday/birthday.txt', 'r') as f:
-							for line in f:
-								temp_line = line.split(' ')
-								response_message = response_message + bytes([int(x,2) for x in temp_line]).decode('utf-8')
-							response_message.replace('\\n', '\n')
-					except:
-						print(sys.exc_info()[0])
-					f.close()
-					self.bot.allow_birthday = False
-					await message.channel.send(response_message)
+					# don't spam
+					time_difference = (datetime.datetime.utcnow() - self.bot.last_timeStamp_regex).total_seconds()
+					if time_difference < 3:
+						return
+					else:
+						self.bot.last_timeStamp_regex = datetime.datetime.utcnow()
+						# limit probability on which this is triggered
+						if random.random() < 0.6:
+							try:
+								response_message = ''
+								with open('responses/regex/birthday/birthday.txt', 'r') as f:
+									for line in f:
+										temp_line = line.split(' ')
+										response_message = response_message + bytes([int(x,2) for x in temp_line]).decode('utf-8')
+									response_message.replace('\\n', '\n')
+							except:
+								print(sys.exc_info()[0])
+							f.close()
+							self.bot.allow_birthday = False
+							await message.channel.send(response_message)
