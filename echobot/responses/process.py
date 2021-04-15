@@ -14,21 +14,23 @@ class Processor(commands.Cog):
 		try:
 			with open('responses/regex_items.txt') as f:
 				for line in f:
-					regex, response = line.strip().split('\t', 1)
+					regex, response, emoji = line.strip().split('\t', 2)
 					regex1 = regex.split(' ')
 					response1 = response.split(' ')
+					emoji1 = emoji.split(' ')
 					regex2 = bytes([int(x,2) for x in regex1]).decode('utf-8')
 					response2 = bytes([int(x,2) for x in response1]).decode('utf-8')
+					emoji2 = bytes([int(x,2) for x in emoji1]).decode('utf-8')
 					# response is a folder in responses/regex folder
-					self.regexes[regex2] = response2.strip()
+					self.regexes[regex2] = [response2.strip(), emoji2.strip()]
 		except:
 			print(sys.exc_info()[0])
 			raise
 		f.close()
 		try:
 			for reg, resp in self.regexes.items():
-				if not (os.path.isdir(os.getcwd() + '/responses/regex' + '/' + resp)):
-					print(resp + ' regex folder does not exist')
+				if not (os.path.isdir(os.getcwd() + '/responses/regex' + '/' + resp[0])):
+					print(resp[0] + ' regex folder does not exist')
 		except:
 			print(sys.exc_info()[0])
 			raise
@@ -43,6 +45,11 @@ class Processor(commands.Cog):
 			for reg, resp in self.regexes.items():
 				try:
 					if re.search(reg, message.content, re.IGNORECASE):
+						# react with emoji
+						for guild in self.bot.guilds:
+							for emoji in guild.emojis:
+								if emoji.name == resp[1]:
+									await message.add_reaction(emoji)
 						# don't spam
 						time_difference = (datetime.datetime.utcnow() - self.bot.last_timeStamp_regex).total_seconds()
 						if time_difference < 3:
@@ -52,9 +59,9 @@ class Processor(commands.Cog):
 							# limit probability on which this is triggered
 							if random.random() < 0.6:
 								try:
-									response_file = random.choice(os.listdir(os.getcwd() + '/responses/regex' + '/' + resp))
+									response_file = random.choice(os.listdir(os.getcwd() + '/responses/regex' + '/' + resp[0]))
 									response_message = ''
-									with open('responses/regex/' + '/' + resp + '/' + response_file, 'r') as f:
+									with open('responses/regex/' + '/' + resp[0] + '/' + response_file, 'r') as f:
 										for line in f:
 											temp_line = line.split(' ')
 											response_message = response_message + bytes([int(x,2) for x in temp_line]).decode('utf-8')
