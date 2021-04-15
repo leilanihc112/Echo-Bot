@@ -70,3 +70,49 @@ class Text(commands.Cog):
             await context.send("Role '{0}' has been deleted".format(role.name))
         else:
             await context.send("Error")
+
+    @commands.command(name='join', help='Have Echo join a voice channel')
+    async def join(self, context, channel=None):
+        if channel == None:
+            channel = context.author.voice.channel
+        if context.voice_client is None:
+            await channel.connect()
+        else:
+            await context.voice_client.move_to(channel)
+
+    @join.error
+    async def join_error(self, ctx, error):
+        if isinstance(error, commands.CommandInvokeError):
+            msg = 'You must be connected to a voice channel before invoking this command'
+            await ctx.send(msg)
+        else:
+            raise error
+
+    @commands.command(name='leave', help='Have Echo leave a voice channel')
+    async def leave(self, context):
+        await context.voice_client.disconnect()
+
+    @leave.error
+    async def leave_error(self, ctx, error):
+        if isinstance(error, commands.CommandInvokeError):
+            msg = 'Not currently connected to a voice channel'
+            await ctx.send(msg)
+        else:
+            raise error
+
+    @commands.command(name='echo_reset', help='Reset avatar and nickname')
+    @commands.cooldown(1, 900, commands.BucketType.user)
+    async def echo_reset(self, context):
+        fp = open("pfp/echo_pfp.jpg", "rb")
+        file = fp.read()
+        await self.bot.user.edit(avatar=file)
+        guild = context.guild
+        await guild.me.edit(nick="Echo")
+
+    @echo_reset.error
+    async def echo_reset_error(self, ctx, error):
+        if isinstance(error, commands.CommandOnCooldown):
+            msg = 'This command is rate limited, please try again in {:.0f}s'.format(error.retry_after)
+            await ctx.send(msg)
+        else:
+            raise error

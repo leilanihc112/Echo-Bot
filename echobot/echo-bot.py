@@ -6,18 +6,14 @@ import notifications.notif
 import os
 import datetime
 import asyncio
+import random
 
 class BetterBot(Bot):
-	def __init__(self, command_prefix):
-		super().__init__(command_prefix)
-		self.allow_birthday = True
-		self.allow_regex = True
-
 	async def process_commands(self, message):
 		ctx = await self.get_context(message)
 		await self.invoke(ctx)
 
-bot = BetterBot(command_prefix='.')
+bot = BetterBot(command_prefix='.', intents=discord.Intents.all())
 
 def define_cogs():
     return {
@@ -30,10 +26,15 @@ _COGS = define_cogs()
 
 @bot.event
 async def on_ready():
-    for name, cog in _COGS.items():
-        bot.add_cog(cog[0](bot))
-    print('Bot connected as {0}'.format(bot.user))
-    print('Bot is living in {0}'.format(bot.guilds))
+	setattr(BetterBot, "allow_birthday", True)
+	setattr(BetterBot, "allow_regex", True)
+	setattr(BetterBot, "last_timeStamp_vc", datetime.datetime.utcfromtimestamp(0))
+	
+	for name, cog in _COGS.items():
+		bot.add_cog(cog[0](bot))
+		
+	print('Bot connected as {0}'.format(bot.user))
+	print('Bot is living in {0}'.format(bot.guilds))
 
 # calculate holidays that are not on a fixed date
 def holiday(month, day_of_week, amount, year):
@@ -193,7 +194,30 @@ async def birthday_check():
 			time=1
 		await(asyncio.sleep(time))
 
+prof_pic_change = "00:00 Sunday"
+
+async def profile_pic_check():
+	await bot.wait_until_ready()
+	while not bot.is_closed():
+		now=datetime.datetime.strftime(datetime.datetime.now(), "%H:%M %A")
+		if now == prof_pic_change:
+			for guild in bot.guilds:
+				member = random.choice(guild.members)
+				while member.name == bot.user.name:
+					member = random.choice(guild.members)
+				await member.avatar_url.save("pfp/pfp.jpg")
+				fp = open("pfp/pfp.jpg", "rb")
+				file = fp.read()
+				await bot.user.edit(avatar=file)
+				mem_nick = member.display_name
+				await guild.me.edit(nick=mem_nick)
+			time=900
+		else:
+			time=1
+		await(asyncio.sleep(time))
+
 bot.loop.create_task(time_check())
 bot.loop.create_task(birthday_check())
+bot.loop.create_task(profile_pic_check())
 
 bot.run(open("secrets.txt","r").read())
