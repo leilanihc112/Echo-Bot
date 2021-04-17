@@ -37,6 +37,11 @@ async def on_ready():
 	print('Bot connected as {0}'.format(bot.user))
 	print('Bot is living in {0}'.format(bot.guilds))
 
+@bot.event
+async def on_command_error(context, error):
+	if isinstance(error, discord.ext.commands.CommandNotFound):
+		await context.send("That's not a valid command")
+
 # calculate holidays that are not on a fixed date
 def holiday(month, day_of_week, amount, year):
 	first = datetime.date(year, month, 1).weekday()
