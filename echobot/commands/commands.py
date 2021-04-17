@@ -108,6 +108,7 @@ class Text(commands.Cog):
         await self.bot.user.edit(avatar=file)
         guild = context.guild
         await guild.me.edit(nick="Echo")
+        await context.send("Successfully reset nickname and profile pic")
 
     @echo_reset.error
     async def echo_reset_error(self, ctx, error):
