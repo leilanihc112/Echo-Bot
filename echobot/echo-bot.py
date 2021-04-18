@@ -7,6 +7,8 @@ import os
 import datetime
 import asyncio
 import random
+import logging
+from logging import handlers
 
 class BetterBot(Bot):
 	async def process_commands(self, message):
@@ -23,6 +25,13 @@ def define_cogs():
     }
 
 _COGS = define_cogs()
+
+logger = logging.getLogger('echo-bot')
+logger.setLevel(logging.DEBUG)
+handler = logging.handlers.TimedRotatingFileHandler(filename='log/echo-bot.log', when='midnight', interval=1, encoding='utf-8')
+handler.setFormatter(logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
+handler.suffix = "%Y%m%d"
+logger.addHandler(handler)
 
 @bot.event
 async def on_ready():
@@ -82,6 +91,7 @@ async def time_check():
 				print(sys.exc_info()[0])
 			f.close()
 			await message_channel.send(holiday_message)
+			logger.info('Holiday 4th of July: Now={0}'.format(now))
 			time=90
 		elif now == april_fools_time:
 			holiday_message = ''
@@ -93,6 +103,7 @@ async def time_check():
 				print(sys.exc_info()[0])
 			f.close()
 			await message_channel.send(holiday_message)
+			logger.info('Holiday April Fools: Now={0}'.format(now))
 			time=90
 		elif now == christmas_time:
 			holiday_message = ''
@@ -104,6 +115,7 @@ async def time_check():
 				print(sys.exc_info()[0])
 			f.close()
 			await message_channel.send(holiday_message)
+			logger.info('Holiday Christmas: Now={0}'.format(now))
 			time=90
 		elif now == halloween_time:
 			holiday_message = ''
@@ -115,6 +127,7 @@ async def time_check():
 				print(sys.exc_info()[0])
 			f.close()
 			await message_channel.send(holiday_message)
+			logger.info('Holiday Halloween: Now={0}'.format(now))
 			time=90
 		elif now == november_time:
 			holiday_message = ''
@@ -126,6 +139,7 @@ async def time_check():
 				print(sys.exc_info()[0])
 			f.close()
 			await message_channel.send(holiday_message)
+			logger.info('Holiday November: Now={0}'.format(now))
 			time=90
 		elif now == holiday(2, 0, 3, datetime.datetime.now().year):
 			holiday_message = ''
@@ -137,6 +151,7 @@ async def time_check():
 				print(sys.exc_info()[0])
 			f.close()
 			await message_channel.send(holiday_message)
+			logger.info('Holiday Presidents Day: Now={0}'.format(now))
 			time=90
 		elif now == st_patricks_time:
 			holiday_message = ''
@@ -148,6 +163,7 @@ async def time_check():
 				print(sys.exc_info()[0])
 			f.close()
 			await message_channel.send(holiday_message)
+			logger.info('Holiday St Patricks: Now={0}'.format(now))
 			time=90
 		elif now == holiday(11, 3, 4, datetime.datetime.now().year):
 			holiday_message = ''
@@ -159,6 +175,7 @@ async def time_check():
 				print(sys.exc_info()[0])
 			f.close()
 			await message_channel.send(holiday_message)
+			logger.info('Holiday Thanksgiving: Now={0}'.format(now))
 			time=90
 		elif now == valentines_time:
 			holiday_message = ''
@@ -170,6 +187,7 @@ async def time_check():
 				print(sys.exc_info()[0])
 			f.close()
 			await message_channel.send(holiday_message)
+			logger.info('Holiday Valentines: Now={0}'.format(now))
 			time=90
 		elif now == four_twenty_time:
 			holiday_message = ''
@@ -181,6 +199,7 @@ async def time_check():
 				print(sys.exc_info()[0])
 			f.close()
 			await message_channel.send(holiday_message)
+			logger.info('Holiday 420: Now={0}'.format(now))
 			time=90
 		else:
 			time=1
@@ -217,6 +236,7 @@ async def profile_pic_check():
 				await bot.user.edit(avatar=file)
 				mem_nick = member.display_name
 				await guild.me.edit(nick=mem_nick)
+				logger.info('Profile Pic & Nickname: Now={0}, member.display_name={1}'.format(now, member.display_name))
 			time=900
 		else:
 			time=1

@@ -5,6 +5,10 @@ class Text(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
+    @commands.command(name='get_log', help='Get log file')
+    async def get_log(self, context):
+        await context.channel.send(file=discord.File('log/echo-bot.log'))
+
     async def get_prev_message(self, context, message_limit=25):
         """Search through previous messages until find one that contains text"""
         for message in (await context.channel.history(limit=message_limit).flatten())[1:]:
