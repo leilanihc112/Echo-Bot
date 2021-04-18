@@ -10,10 +10,6 @@ class Text(commands.Cog):
     async def get_log(self, context):
         await context.channel.send(file=discord.File('log/echo-bot.log'))
 
-    @commands.command(name='get_time', help='Get current time')
-    async def get_time(self, context):
-        await context.channel.send(datetime.datetime.strftime(datetime.datetime.now(), "%A %m/%d/%Y %H:%M:%S"))
-
     async def get_prev_message(self, context, message_limit=25):
         """Search through previous messages until find one that contains text"""
         for message in (await context.channel.history(limit=message_limit).flatten())[1:]:
