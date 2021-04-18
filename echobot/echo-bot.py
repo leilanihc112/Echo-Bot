@@ -205,7 +205,7 @@ async def time_check():
 			time=1
 		await(asyncio.sleep(time))
 
-midnight_time = "00:15"
+midnight_time = "00:00"
 
 # send message on birthdays - only send in response to regex once per day
 async def birthday_check():
@@ -219,7 +219,7 @@ async def birthday_check():
 			time=1
 		await(asyncio.sleep(time))
 
-prof_pic_change = "00:15 Sunday"
+prof_pic_change = "00:00 Sunday"
 
 async def profile_pic_check():
 	await bot.wait_until_ready()

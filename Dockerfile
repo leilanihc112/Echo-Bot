@@ -11,3 +11,5 @@ COPY . /echobot
 # Run Echo Bot
 WORKDIR /echobot/echobot
 CMD python3 ./echo-bot.py
+
+ENV TZ="America/Chicago"
