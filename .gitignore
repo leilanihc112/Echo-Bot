@@ -1,4 +1,4 @@
 secrets.txt
 __pycache__/
 pfp.jpg
-*.log
+echo-bot-log*

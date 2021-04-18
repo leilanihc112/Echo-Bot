@@ -28,7 +28,7 @@ _COGS = define_cogs()
 
 logger = logging.getLogger('echo-bot')
 logger.setLevel(logging.DEBUG)
-handler = logging.handlers.TimedRotatingFileHandler(filename='log/echo-bot.log', when='midnight', interval=1, encoding='utf-8')
+handler = logging.handlers.TimedRotatingFileHandler(filename='log/echo-bot-log.log', when='midnight', interval=1, encoding='utf-8')
 handler.setFormatter(logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
 handler.suffix = "%Y%m%d"
 logger.addHandler(handler)
