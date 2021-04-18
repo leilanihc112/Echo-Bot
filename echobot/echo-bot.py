@@ -26,6 +26,9 @@ def define_cogs():
 
 _COGS = define_cogs()
 
+if not os.path.exists("log/echo-bot-log.log"):
+	f = open("log/echo-bot-log.log", "w")
+	f.close()
 logger = logging.getLogger('echo-bot')
 logger.setLevel(logging.DEBUG)
 handler = logging.handlers.TimedRotatingFileHandler(filename='log/echo-bot-log.log', when='midnight', interval=1, encoding='utf-8')
@@ -219,7 +222,7 @@ async def birthday_check():
 			time=1
 		await(asyncio.sleep(time))
 
-prof_pic_change = "00:00 Sunday"
+prof_pic_change = "00:45 Sunday"
 
 async def profile_pic_check():
 	await bot.wait_until_ready()
