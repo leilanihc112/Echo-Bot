@@ -6,13 +6,13 @@ class Text(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
+    @commands.command(name='get_guilds', help='Get guilds')
+    async def get_guilds(self, context):
+        await context.channel.send(self.bot.guilds)
+
     @commands.command(name='get_log', help='Get log file')
     async def get_log(self, context):
         await context.channel.send(file=discord.File('log/echo-bot.log'))
-
-    @commands.command(name='cwd', help='Get cwd')
-    async def cwd(self, context):
-        await context.channel.send(os.getcwd())
 
     async def get_prev_message(self, context, message_limit=25):
         """Search through previous messages until find one that contains text"""
