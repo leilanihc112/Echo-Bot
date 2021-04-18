@@ -76,8 +76,8 @@ november_time = '11/01 09:00'
 st_patricks_time = '03/17 09:00'
 valentines_time = '02/14 09:00'
 four_twenty_time = '04/20 16:20'
-midnight_time = "00:00"
-prof_pic_change = "01:15 Sunday"
+midnight_time = "01:18"
+prof_pic_change = "01:18 Sunday"
 message_channel_id= 499279740935471109
 
 # send message on holidays
