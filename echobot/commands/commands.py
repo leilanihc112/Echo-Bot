@@ -1,6 +1,6 @@
 import discord
 from discord.ext import commands
-import datetime
+import os
 
 class Text(commands.Cog):
     def __init__(self, bot):
@@ -9,6 +9,10 @@ class Text(commands.Cog):
     @commands.command(name='get_log', help='Get log file')
     async def get_log(self, context):
         await context.channel.send(file=discord.File('log/echo-bot.log'))
+
+    @commands.command(name='cwd', help='Get cwd')
+    async def cwd(self, context):
+        await context.channel.send(os.getcwd())
 
     async def get_prev_message(self, context, message_limit=25):
         """Search through previous messages until find one that contains text"""
