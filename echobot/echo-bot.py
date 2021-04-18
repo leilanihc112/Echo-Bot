@@ -78,7 +78,8 @@ valentines_time = '02/14 09:00'
 four_twenty_time = '04/20 16:20'
 midnight_time = "00:00"
 prof_pic_change = "00:00 Sunday"
-message_channel_id= 499279740935471109
+message_channel_id = 499279740935471109
+guild_id = 499279740935471105
 
 # send message on holidays
 async def time_check():
@@ -212,16 +213,17 @@ async def time_check():
 			bot.allow_birthday = True
 			if now2 == prof_pic_change:
 				for guild in bot.guilds:
-					member = random.choice(guild.members)
-					while member.name == bot.user.name:
+					if guild.id == guild_id:
 						member = random.choice(guild.members)
-					await member.avatar_url.save("pfp/pfp.jpg")
-					fp = open("pfp/pfp.jpg", "rb")
-					file = fp.read()
-					await bot.user.edit(avatar=file)
-					mem_nick = member.display_name
-					await guild.me.edit(nick=mem_nick)
-					logger.info('Profile Pic & Nickname: Now={0}, member.display_name={1}'.format(now, member.display_name))
+						while member.name == bot.user.name:
+							member = random.choice(guild.members)
+						await member.avatar_url.save("pfp/pfp.jpg")
+						fp = open("pfp/pfp.jpg", "rb")
+						file = fp.read()
+						await bot.user.edit(avatar=file)
+						mem_nick = member.display_name
+						await guild.me.edit(nick=mem_nick)
+						logger.info('Profile Pic & Nickname: Now={0}, member.display_name={1}'.format(now, member.display_name))
 			time=900
 		else:
 			time=1

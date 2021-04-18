@@ -1,14 +1,9 @@
 import discord
 from discord.ext import commands
-import os
 
 class Text(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-
-    @commands.command(name='get_guilds', help='Get guilds')
-    async def get_guilds(self, context):
-        await context.channel.send(self.bot.guilds)
 
     @commands.command(name='get_log', help='Get log file')
     async def get_log(self, context):
