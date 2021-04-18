@@ -76,6 +76,8 @@ november_time = '11/01 09:00'
 st_patricks_time = '03/17 09:00'
 valentines_time = '02/14 09:00'
 four_twenty_time = '04/20 16:20'
+midnight_time = "00:00"
+prof_pic_change = "00:00 Sunday"
 message_channel_id= 499279740935471109
 
 # send message on holidays
@@ -84,6 +86,8 @@ async def time_check():
 	message_channel=bot.get_channel(message_channel_id)
 	while not bot.is_closed():
 		now=datetime.datetime.strftime(datetime.datetime.now(), '%m/%d %H:%M')
+		now1=datetime.datetime.strftime(datetime.datetime.now(), '%H:%M')
+		now2=datetime.datetime.strftime(datetime.datetime.now(), "%H:%M %A")
 		if now == july_time:
 			holiday_message = ''
 			try:
@@ -204,49 +208,25 @@ async def time_check():
 			await message_channel.send(holiday_message)
 			logger.info('Holiday 420: Now={0}'.format(now))
 			time=90
-		else:
-			time=1
-		await(asyncio.sleep(time))
-
-midnight_time = "00:00"
-
-# send message on birthdays - only send in response to regex once per day
-async def birthday_check():
-	await bot.wait_until_ready()
-	while not bot.is_closed():
-		now=datetime.datetime.strftime(datetime.datetime.now(), '%H:%M')
-		if now == midnight_time:
+		elif now1 == midnight_time:
 			bot.allow_birthday = True
-			time=90
-		else:
-			time=1
-		await(asyncio.sleep(time))
-
-prof_pic_change = "00:45 Sunday"
-
-async def profile_pic_check():
-	await bot.wait_until_ready()
-	while not bot.is_closed():
-		now=datetime.datetime.strftime(datetime.datetime.now(), "%H:%M %A")
-		if now == prof_pic_change:
-			for guild in bot.guilds:
-				member = random.choice(guild.members)
-				while member.name == bot.user.name:
+			if now2 == prof_pic_change:
+				for guild in bot.guilds:
 					member = random.choice(guild.members)
-				await member.avatar_url.save("pfp/pfp.jpg")
-				fp = open("pfp/pfp.jpg", "rb")
-				file = fp.read()
-				await bot.user.edit(avatar=file)
-				mem_nick = member.display_name
-				await guild.me.edit(nick=mem_nick)
-				logger.info('Profile Pic & Nickname: Now={0}, member.display_name={1}'.format(now, member.display_name))
+					while member.name == bot.user.name:
+						member = random.choice(guild.members)
+					await member.avatar_url.save("pfp/pfp.jpg")
+					fp = open("pfp/pfp.jpg", "rb")
+					file = fp.read()
+					await bot.user.edit(avatar=file)
+					mem_nick = member.display_name
+					await guild.me.edit(nick=mem_nick)
+					logger.info('Profile Pic & Nickname: Now={0}, member.display_name={1}'.format(now, member.display_name))
 			time=900
 		else:
 			time=1
 		await(asyncio.sleep(time))
 
 bot.loop.create_task(time_check())
-bot.loop.create_task(birthday_check())
-bot.loop.create_task(profile_pic_check())
 
 bot.run(open("secrets.txt","r").read())
