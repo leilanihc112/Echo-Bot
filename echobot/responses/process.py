@@ -70,9 +70,9 @@ class Processor(commands.Cog):
 									print(sys.exc_info()[0])
 								f.close()
 								await message.channel.send(response_message)
-				except KeyError as e:
-					print(e)
-					continue
+			except KeyError as e:
+				print(e)
+				continue
 			if self.bot.allow_birthday:
 				if re.search('happy birthday|happy bday|hbd', message.content, re.IGNORECASE):
 					# don't spam
