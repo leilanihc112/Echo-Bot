@@ -41,15 +41,15 @@ class Processor(commands.Cog):
 			return
 		if message.content.startswith(self.bot.command_prefix):
 			return
-		if self.bot.allow_regex == True:
-			for reg, resp in self.regexes.items():
-				try:
-					if re.search(reg, message.content, re.IGNORECASE):
-						# react with emoji
-						for guild in self.bot.guilds:
-							for emoji in guild.emojis:
-								if emoji.name == resp[1]:
-									await message.add_reaction(emoji)
+		for reg, resp in self.regexes.items():
+			try:
+				if re.search(reg, message.content, re.IGNORECASE):
+					# react with emoji
+					for guild in self.bot.guilds:
+						for emoji in guild.emojis:
+							if emoji.name == resp[1]:
+								await message.add_reaction(emoji)
+					if self.bot.allow_regex == True:
 						# don't spam
 						time_difference = (datetime.datetime.utcnow() - self.bot.last_timeStamp_regex).total_seconds()
 						if time_difference < 3:

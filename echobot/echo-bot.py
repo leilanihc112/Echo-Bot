@@ -94,7 +94,7 @@ async def time_check():
 			try:
 				with open('responses/holiday/4th_of_july.txt', 'r', encoding='utf8') as f:
 					for line in f:
-						holiday_message = holiday_message + line
+						holiday_message = holiday_message + bytes([int(x,2) for x in line]).decode('utf-8')
 			except:
 				print(sys.exc_info()[0])
 			f.close()
@@ -106,7 +106,7 @@ async def time_check():
 			try:
 				with open('responses/holiday/april_fools.txt', 'r', encoding='utf8') as f:
 					for line in f:
-						holiday_message = holiday_message + line
+						holiday_message = holiday_message + bytes([int(x,2) for x in line]).decode('utf-8')
 			except:
 				print(sys.exc_info()[0])
 			f.close()
@@ -118,7 +118,7 @@ async def time_check():
 			try:
 				with open('responses/holiday/christmas.txt', 'r', encoding='utf8') as f:
 					for line in f:
-						holiday_message = holiday_message + line
+						holiday_message = holiday_message + bytes([int(x,2) for x in line]).decode('utf-8')
 			except:
 				print(sys.exc_info()[0])
 			f.close()
@@ -130,7 +130,7 @@ async def time_check():
 			try:
 				with open('responses/holiday/halloween.txt', 'r', encoding='utf8') as f:
 					for line in f:
-						holiday_message = holiday_message + line
+						holiday_message = holiday_message + bytes([int(x,2) for x in line]).decode('utf-8')
 			except:
 				print(sys.exc_info()[0])
 			f.close()
@@ -142,7 +142,7 @@ async def time_check():
 			try:
 				with open('responses/holiday/november.txt', 'r', encoding='utf8') as f:
 					for line in f:
-						holiday_message = holiday_message + line
+						holiday_message = holiday_message + bytes([int(x,2) for x in line]).decode('utf-8')
 			except:
 				print(sys.exc_info()[0])
 			f.close()
@@ -154,7 +154,7 @@ async def time_check():
 			try:
 				with open('responses/holiday/presidents_day.txt', 'r', encoding='utf8') as f:
 					for line in f:
-						holiday_message = holiday_message + line
+						holiday_message = holiday_message + bytes([int(x,2) for x in line]).decode('utf-8')
 			except:
 				print(sys.exc_info()[0])
 			f.close()
@@ -166,7 +166,7 @@ async def time_check():
 			try:
 				with open('responses/holiday/st_patricks.txt', 'r', encoding='utf8') as f:
 					for line in f:
-						holiday_message = holiday_message + line
+						holiday_message = holiday_message + bytes([int(x,2) for x in line]).decode('utf-8')
 			except:
 				print(sys.exc_info()[0])
 			f.close()
@@ -178,7 +178,7 @@ async def time_check():
 			try:
 				with open('responses/holiday/thanksgiving.txt', 'r', encoding='utf8') as f:
 					for line in f:
-						holiday_message = holiday_message + line
+						holiday_message = holiday_message + bytes([int(x,2) for x in line]).decode('utf-8')
 			except:
 				print(sys.exc_info()[0])
 			f.close()
@@ -190,7 +190,7 @@ async def time_check():
 			try:
 				with open('responses/holiday/valentines.txt', 'r', encoding='utf8') as f:
 					for line in f:
-						holiday_message = holiday_message + line
+						holiday_message = holiday_message + bytes([int(x,2) for x in line]).decode('utf-8')
 			except:
 				print(sys.exc_info()[0])
 			f.close()
@@ -202,7 +202,7 @@ async def time_check():
 			try:
 				with open('responses/holiday/420.txt', 'r', encoding='utf8') as f:
 					for line in f:
-						holiday_message = holiday_message + line
+						holiday_message = holiday_message + bytes([int(x,2) for x in line]).decode('utf-8')
 			except:
 				print(sys.exc_info()[0])
 			f.close()
