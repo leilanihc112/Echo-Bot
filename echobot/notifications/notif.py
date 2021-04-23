@@ -33,4 +33,4 @@ class Notifications(commands.Cog):
                         return
                     else:
                         self.bot.last_timeStamp_vc = datetime.datetime.utcnow()
-                        await message_channel.send("IT'S GAMER TIME @here")
+                        await message_channel.send("IT'S GAMER TIME @&831364494013497354")
