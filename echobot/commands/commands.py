@@ -1,6 +1,5 @@
 import discord
 from discord.ext import commands
-import os
 
 class Text(commands.Cog):
     def __init__(self, bot):
@@ -120,5 +119,6 @@ class Text(commands.Cog):
         if isinstance(error, commands.CommandOnCooldown):
             msg = 'This command is rate limited, please try again in {:.0f}s'.format(error.retry_after)
             await ctx.send(msg)
+            logger.info('Rate limited for echo_reset')
         else:
             raise error
