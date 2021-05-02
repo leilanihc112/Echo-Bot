@@ -27,6 +27,7 @@ class Processor(commands.Cog):
 			print(sys.exc_info()[0])
 			raise
 		f.close()
+		'''
 		try:
 			for reg, resp in self.regexes.items():
 				if not (os.path.isdir(os.getcwd() + '/responses/regex' + '/' + resp[0])):
@@ -34,6 +35,7 @@ class Processor(commands.Cog):
 		except:
 			print(sys.exc_info()[0])
 			raise
+		'''
 
 	@commands.Cog.listener()
 	async def on_message(self, message):
@@ -49,6 +51,7 @@ class Processor(commands.Cog):
 						for emoji in guild.emojis:
 							if emoji.name == resp[1]:
 								await message.add_reaction(emoji)
+					'''
 					if self.bot.allow_regex == True:
 						# don't spam
 						time_difference = (datetime.datetime.utcnow() - self.bot.last_timeStamp_regex).total_seconds()
@@ -70,9 +73,11 @@ class Processor(commands.Cog):
 									print(sys.exc_info()[0])
 								f.close()
 								await message.channel.send(response_message)
+					'''
 			except KeyError as e:
 				print(e)
 				continue
+			'''
 			if self.bot.allow_birthday:
 				if re.search('happy birthday|happy bday|hbd', message.content, re.IGNORECASE):
 					try:
@@ -87,3 +92,4 @@ class Processor(commands.Cog):
 					f.close()
 					self.bot.allow_birthday = False
 					await message.channel.send(response_message)
+			'''

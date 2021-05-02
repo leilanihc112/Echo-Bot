@@ -34,6 +34,7 @@ class Text(commands.Cog):
         await ctx.send("Error. Check log file")
         logger.info("ECHO ERROR " + str(error))
 
+    '''
     @commands.command(name='regex', help='Toggle regex responses')
     async def regex(self, context, *, content:str=""):
         if content.lower() == "on":
@@ -56,6 +57,7 @@ class Text(commands.Cog):
     async def regex_error(self, ctx, error):
         await ctx.send("Error. Check log file")
         logger.info("REGEX ERROR " + str(error))
+    '''
 
     @commands.command(name='add_role', help='Add role to user')
     async def add_role(self, context, role:discord.Role, member:discord.Member):

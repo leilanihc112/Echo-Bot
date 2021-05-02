@@ -27,8 +27,8 @@ _COGS = define_cogs()
 
 @bot.event
 async def on_ready():
-	setattr(BetterBot, "allow_birthday", True)
-	setattr(BetterBot, "allow_regex", True)
+	#setattr(BetterBot, "allow_birthday", True)
+	#setattr(BetterBot, "allow_regex", True)
 	setattr(BetterBot, "last_timeStamp_vc", datetime.datetime.utcfromtimestamp(0))
 	setattr(BetterBot, "last_timeStamp_regex", datetime.datetime.utcfromtimestamp(0))
 	
@@ -199,7 +199,7 @@ async def time_check():
 			logger.info('Holiday 420: Now={0}'.format(now))
 			time=90
 		elif now1 == midnight_time:
-			bot.allow_birthday = True
+			#bot.allow_birthday = True
 			if now2 == prof_pic_change:
 				for guild in bot.guilds:
 					if guild.id == guild_id:
