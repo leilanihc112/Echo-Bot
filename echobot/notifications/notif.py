@@ -5,7 +5,8 @@ import datetime
 class Notifications(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-
+    
+'''
     # send message if someone enters voice chat
     @commands.Cog.listener()
     async def on_voice_state_update(self, member, before, after):
@@ -34,3 +35,4 @@ class Notifications(commands.Cog):
                     else:
                         self.bot.last_timeStamp_vc = datetime.datetime.utcnow()
                         await message_channel.send("IT'S GAMER TIME <@&831364494013497354>")
+'''

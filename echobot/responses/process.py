@@ -10,6 +10,7 @@ import datetime
 class Processor(commands.Cog):
 	def __init__(self, bot):
 		self.bot = bot
+        '''
 		self.regexes = {}
 		try:
 			with open('responses/regex_items.txt') as f:
@@ -27,7 +28,6 @@ class Processor(commands.Cog):
 			print(sys.exc_info()[0])
 			raise
 		f.close()
-		'''
 		try:
 			for reg, resp in self.regexes.items():
 				if not (os.path.isdir(os.getcwd() + '/responses/regex' + '/' + resp[0])):
@@ -43,6 +43,9 @@ class Processor(commands.Cog):
 			return
 		if message.content.startswith(self.bot.command_prefix):
 			return
+        if client.user.mentioned_in(message):
+            await message.channel.send("You can type '.help' for more info")
+        '''
 		for reg, resp in self.regexes.items():
 			#try:
 			if re.search(reg, message.content, re.IGNORECASE):
@@ -51,7 +54,6 @@ class Processor(commands.Cog):
 					for emoji in guild.emojis:
 						if emoji.name == resp[1]:
 							await message.add_reaction(emoji)
-					'''
 					if self.bot.allow_regex == True:
 						# don't spam
 						time_difference = (datetime.datetime.utcnow() - self.bot.last_timeStamp_regex).total_seconds()
@@ -90,4 +92,4 @@ class Processor(commands.Cog):
 					f.close()
 					self.bot.allow_birthday = False
 					await message.channel.send(response_message)
-			'''
+        '''
