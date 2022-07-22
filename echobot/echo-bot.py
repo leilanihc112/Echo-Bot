@@ -8,6 +8,71 @@ import datetime
 import asyncio
 import random
 from logger import logger
+import pandas
+import nltk
+from typing import List, Tuple
+from nltk import word_tokenize
+from collections import Counter
+from collections import namedtuple
+
+def process_code(data) -> List[List[str]]:
+    ret = []
+    for _, row in data.iterrows():
+        if row[1] != "Joined the server.":
+            ret.append(row[1].split())
+    return ret
+
+def make_ngram_tuples(words, n) -> List[Tuple]:
+    to_return = []
+    for w in range(len(words)+1):
+        if w == 0:
+            preceding_words = ('<s>',) * (n-1)
+        else:
+            preceding_words = to_return[w-1][0][1:] + (to_return[w-1][1],)
+        if w < len(words):
+            to_return.append((preceding_words, words[w],))
+        else:
+            to_return.append((preceding_words, '</s>',))
+
+    return to_return
+
+def get_vocab(tokenized_msgs) -> set:
+    vocab = {}
+    for msg in tokenized_msgs:
+        for token in msg:
+            if token in vocab:
+                vocab[token] += 1
+            else:
+                vocab[token] = 1
+    
+    vocab = {k: v for k, v in vocab.items() if v > 1}
+    
+    return vocab
+
+def process_unk(tokenized_msgs, vocab) -> List[List[str]]:
+    ret = [['<UNK>' if token not in vocab else token for token in msg] for msg in tokenized_msgs]
+
+    return ret
+
+def get_freq_dict(tokenized_msgs, n) -> dict:
+    freqdict = {}
+    ngram = []
+    for msg in tokenized_msgs:
+        ngram += make_ngram_tuples(msg, n)
+    for token in ngram:
+        if token[0] in freqdict:
+            continue
+        freqdict[token[0]] = (Counter([y for (x,y) in ngram if x == token[0]]))
+        freqdict[token[0]] = dict(sorted(freqdict[token[0]].items(), key=lambda item: item[1], reverse = True))
+    return freqdict
+
+def build_ngram_model(codefile, n):
+    LanguageModel = namedtuple('LanguageModel', ['n', 'fd', 'vocab'])
+    psents = process_code(codefile)
+    vocab = get_vocab(psents)
+    psentsunk = process_unk(psents, vocab)
+    fd = get_freq_dict(psentsunk, n)
+    return LanguageModel(n, fd, vocab)
 
 class BetterBot(Bot):
 	async def process_commands(self, message):
@@ -29,14 +94,18 @@ _COGS = define_cogs()
 async def on_ready():
 	#setattr(BetterBot, "allow_birthday", True)
 	#setattr(BetterBot, "allow_regex", True)
-	setattr(BetterBot, "last_timeStamp_vc", datetime.datetime.utcfromtimestamp(0))
-	setattr(BetterBot, "last_timeStamp_regex", datetime.datetime.utcfromtimestamp(0))
-	
-	for name, cog in _COGS.items():
-		bot.add_cog(cog[0](bot))
-		
-	print('Bot connected as {0}'.format(bot.user))
-	print('Bot is living in {0}'.format(bot.guilds))
+    nltk.download('punkt')
+    sentiment_data = pandas.read_csv("training_data_1.csv", header = None, encoding = "ISO-8859-1")
+    lm = build_ngram_model(sentiment_data, 2)
+    setattr(BetterBot, "lm", lm)
+    setattr(BetterBot, "last_timeStamp_vc", datetime.datetime.utcfromtimestamp(0))
+    setattr(BetterBot, "last_timeStamp_regex", datetime.datetime.utcfromtimestamp(0))
+    
+    for name, cog in _COGS.items():
+        bot.add_cog(cog[0](bot))
+    
+    print('Bot connected as {0}'.format(bot.user))
+    print('Bot is living in {0}'.format(bot.guilds))
 
 @bot.event
 async def on_command_error(context, error):
