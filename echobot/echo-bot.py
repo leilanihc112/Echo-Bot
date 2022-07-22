@@ -95,7 +95,7 @@ async def on_ready():
 	#setattr(BetterBot, "allow_birthday", True)
 	#setattr(BetterBot, "allow_regex", True)
     nltk.download('punkt')
-    sentiment_data = pandas.read_csv("training_data_1.csv", header = None, encoding = "ISO-8859-1")
+    sentiment_data = pandas.read_csv("data/training_data_1.csv", header = None, encoding = "ISO-8859-1")
     lm = build_ngram_model(sentiment_data, 2)
     setattr(BetterBot, "lm", lm)
     setattr(BetterBot, "last_timeStamp_vc", datetime.datetime.utcfromtimestamp(0))
