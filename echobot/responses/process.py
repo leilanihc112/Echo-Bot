@@ -12,27 +12,45 @@ def msg_generator(bigramlm) -> List[str]:
     generated_tokens = []
     token = '<s>'
     while len(generated_tokens) < 100:
-        token = list(bigramlm.fd[(token,)])
-        # remove unknown
-        if '<UNK>' in token:
-            token.remove('<UNK>')
-        # if there are no tokens left, break (error)
+        token = bigramlm.fd[(token,)]
+        # skip <UNK>
+        # if '<UNK>' in token:
+            # del token['<UNK>']
+        # if there are no tokens left, just do end token
         if len(token) == 0:
-            break
-        # if there are at least 5, pick one of the top 5
-        elif len(token) >= 5:
-            token = token[randint(0,4)]
-        # otherwise, pick one of any of the ones available
+            token = '</s>'
+        elif len(token) >= 8:
+            if token != '<s>':
+                token = token.most_common(8)
+                index = randint(0,7)
+            else:
+                token = token.most_common(len(token))
+                index = randint(0,len(token)-1)
         else:
-            token = token[randint(0,len(token)-1)]
+            token = token.most_common(len(token))
+            index = randint(0,len(token)-1)
+        token = token[index][0]
         # if we've hit end token, break while loop
         if token == '</s>':
             break
         else:
             generated_tokens.append(token)
-    # separate tokens by space
-    generated_msg = ' '.join(generated_tokens)
-        
+    # separate tokens by space, except for punctuation
+    if generated_tokens:
+        generated_msg = generated_tokens[0]
+        for i in range(1, len(generated_tokens)):
+            if i == 1:
+                if generated_tokens[0] in '.,!?;\(\)\[\]\{\}&':
+                    generated_msg += generated_tokens[i]
+                else:
+                    generated_msg += (" " + generated_tokens[i])
+            else:
+                if generated_tokens[i] not in '.,!?;\(\)\[\]\{\}&':
+                    generated_msg += (" " + generated_tokens[i])
+                else:
+                    generated_msg += generated_tokens[i]
+    else:
+        generated_msg = "yeah bro"
     return generated_msg
 
 

@@ -14,12 +14,25 @@ from typing import List, Tuple
 from nltk import word_tokenize
 from collections import Counter
 from collections import namedtuple
+import re
 
 def process_code(data) -> List[List[str]]:
     ret = []
+    gruber = re.compile(r"""(?i)\b((?:https?:(?:/{1,3}|[a-z0-9%])|[a-z0-9.\-]+[.](?:com|net|org|edu|gov|mil|aero|asia|biz|cat|coop|info|int|jobs|mobi|museum|name|post|pro|tel|travel|xxx|ac|ad|ae|af|ag|ai|al|am|an|ao|aq|ar|as|at|au|aw|ax|az|ba|bb|bd|be|bf|bg|bh|bi|bj|bm|bn|bo|br|bs|bt|bv|bw|by|bz|ca|cc|cd|cf|cg|ch|ci|ck|cl|cm|cn|co|cr|cs|cu|cv|cx|cy|cz|dd|de|dj|dk|dm|do|dz|ec|ee|eg|eh|er|es|et|eu|fi|fj|fk|fm|fo|fr|ga|gb|gd|ge|gf|gg|gh|gi|gl|gm|gn|gp|gq|gr|gs|gt|gu|gw|gy|hk|hm|hn|hr|ht|hu|id|ie|il|im|in|io|iq|ir|is|it|je|jm|jo|jp|ke|kg|kh|ki|km|kn|kp|kr|kw|ky|kz|la|lb|lc|li|lk|lr|ls|lt|lu|lv|ly|ma|mc|md|me|mg|mh|mk|ml|mm|mn|mo|mp|mq|mr|ms|mt|mu|mv|mw|mx|my|mz|na|nc|ne|nf|ng|ni|nl|no|np|nr|nu|nz|om|pa|pe|pf|pg|ph|pk|pl|pm|pn|pr|ps|pt|pw|py|qa|re|ro|rs|ru|rw|sa|sb|sc|sd|se|sg|sh|si|sj|Ja|sk|sl|sm|sn|so|sr|ss|st|su|sv|sx|sy|sz|tc|td|tf|tg|th|tj|tk|tl|tm|tn|to|tp|tr|tt|tv|tw|tz|ua|ug|uk|us|uy|uz|va|vc|ve|vg|vi|vn|vu|wf|ws|ye|yt|yu|za|zm|zw)/)(?:[^\s()<>{}\[\]]+|\([^\s()]*?\([^\s()]+\)[^\s()]*?\)|\([^\s]+?\))+(?:\([^\s()]*?\([^\s()]+\)[^\s()]*?\)|\([^\s]+?\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’])|(?:(?<!@)[a-z0-9]+(?:[.\-][a-z0-9]+)*[.](?:com|net|org|edu|gov|mil|aero|asia|biz|cat|coop|info|int|jobs|mobi|museum|name|post|pro|tel|travel|xxx|ac|ad|ae|af|ag|ai|al|am|an|ao|aq|ar|as|at|au|aw|ax|az|ba|bb|bd|be|bf|bg|bh|bi|bj|bm|bn|bo|br|bs|bt|bv|bw|by|bz|ca|cc|cd|cf|cg|ch|ci|ck|cl|cm|cn|co|cr|cs|cu|cv|cx|cy|cz|dd|de|dj|dk|dm|do|dz|ec|ee|eg|eh|er|es|et|eu|fi|fj|fk|fm|fo|fr|ga|gb|gd|ge|gf|gg|gh|gi|gl|gm|gn|gp|gq|gr|gs|gt|gu|gw|gy|hk|hm|hn|hr|ht|hu|id|ie|il|im|in|io|iq|ir|is|it|je|jm|jo|jp|ke|kg|kh|ki|km|kn|kp|kr|kw|ky|kz|la|lb|lc|li|lk|lr|ls|lt|lu|lv|ly|ma|mc|md|me|mg|mh|mk|ml|mm|mn|mo|mp|mq|mr|ms|mt|mu|mv|mw|mx|my|mz|na|nc|ne|nf|ng|ni|nl|no|np|nr|nu|nz|om|pa|pe|pf|pg|ph|pk|pl|pm|pn|pr|ps|pt|pw|py|qa|re|ro|rs|ru|rw|sa|sb|sc|sd|se|sg|sh|si|sj|Ja|sk|sl|sm|sn|so|sr|ss|st|su|sv|sx|sy|sz|tc|td|tf|tg|th|tj|tk|tl|tm|tn|to|tp|tr|tt|tv|tw|tz|ua|ug|uk|us|uy|uz|va|vc|ve|vg|vi|vn|vu|wf|ws|ye|yt|yu|za|zm|zw)\b/?(?!@)))""")
     for _, row in data.iterrows():
         if row[1] != "Joined the server.":
-            ret.append(row[1].split())
+            split_row = gruber.split(row[1])
+            
+            row_to_append = []
+            for i in range(len(split_row)):
+                if i % 2 != 0:
+                    row_to_append.append(split_row[i])
+                else:
+                    if split_row[i] != ' ' and split_row[i] != '':
+                        row_to_append += re.findall(r'@?[a-zA-Z0-9\']+|[.,!?;\(\)\[\]\{\}&]+', split_row[i])
+            
+            ret.append(row_to_append)
+
     return ret
 
 def make_ngram_tuples(words, n) -> List[Tuple]:
@@ -49,29 +62,30 @@ def get_vocab(tokenized_msgs) -> set:
     
     return vocab
 
-def process_unk(tokenized_msgs, vocab) -> List[List[str]]:
-    ret = [['<UNK>' if token not in vocab else token for token in msg] for msg in tokenized_msgs]
+# def process_unk(tokenized_msgs, vocab) -> List[List[str]]:
+    # ret = [['<UNK>' if token not in vocab else token for token in msg] for msg in tokenized_msgs]
 
-    return ret
+    # return ret
 
 def get_freq_dict(tokenized_msgs, n) -> dict:
     freqdict = {}
     ngram = []
-    for msg in tokenized_msgs:
-        ngram += make_ngram_tuples(msg, n)
+    for func in tokenized_msgs:
+        ngram += make_ngram_tuples(func, n)
     for token in ngram:
         if token[0] in freqdict:
-            continue
-        freqdict[token[0]] = (Counter([y for (x,y) in ngram if x == token[0]]))
-        freqdict[token[0]] = dict(sorted(freqdict[token[0]].items(), key=lambda item: item[1], reverse = True))
+            freqdict[token[0]].update({token[1]: 1})
+        else:
+            freqdict[token[0]] = Counter([token[1]])
     return freqdict
 
 def build_ngram_model(codefile, n):
     LanguageModel = namedtuple('LanguageModel', ['n', 'fd', 'vocab'])
     psents = process_code(codefile)
     vocab = get_vocab(psents)
-    psentsunk = process_unk(psents, vocab)
-    fd = get_freq_dict(psentsunk, n)
+    #psentsunk = process_unk(psents, vocab)
+    #fd = get_freq_dict(psentsunk, n)
+    fd = get_freq_dict(psents, n)
     return LanguageModel(n, fd, vocab)
 
 class BetterBot(Bot):
@@ -94,6 +108,7 @@ _COGS = define_cogs()
 async def on_ready():
 	#setattr(BetterBot, "allow_birthday", True)
 	#setattr(BetterBot, "allow_regex", True)
+    print('Training...')
     nltk.download('punkt')
     sentiment_data = pandas.read_csv("data/training_data_1.csv", header = None, encoding = "ISO-8859-1")
     lm = build_ngram_model(sentiment_data, 2)
