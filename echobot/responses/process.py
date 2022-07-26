@@ -93,7 +93,7 @@ class Processor(commands.Cog):
             return
         if client.user.mentioned_in(message):
             msg = msg_generator(self.bot.lm)
-            await message.channel.send(msg)
+            await message.channel.send("what")
         '''
         for reg, resp in self.regexes.items():
             #try:
