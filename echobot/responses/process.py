@@ -91,9 +91,11 @@ class Processor(commands.Cog):
             return
         if message.content.startswith(self.bot.command_prefix):
             return
-        if client.user.mentioned_in(message):
+        if message.mention_everyone:
+            return
+        if self.bot.user.mentioned_in(message):
             msg = msg_generator(self.bot.lm)
-            await message.channel.send("what")
+            await message.channel.send(msg)
         '''
         for reg, resp in self.regexes.items():
             #try:
