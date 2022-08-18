@@ -5,6 +5,12 @@ from logger import logger
 class Text(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+        
+    @commands.command(name='shutdown', help='Shutdown instance of Echo')
+    @commands.is_owner()
+    async def shutdown(self, ctx):
+        await ctx.send("Shutting down...")
+        await ctx.bot.logout()
 
     @commands.command(name='get_log', help='Get log file')
     async def get_log(self, context):
